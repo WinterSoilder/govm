@@ -4,7 +4,6 @@ import (
 	"context"
 	"example/user/govm/api"
 	"example/user/govm/db"
-	"example/user/govm/process"
 	"log"
 	"net/http"
 	"time"
@@ -23,9 +22,9 @@ func main() {
 		panic(nil)
 	}
 
-	process.LaunchVM()
-
 	r := mux.NewRouter()
+
+	r.PathPrefix("").Handler(http.FileServer(http.Dir("./web/build/")))
 
 	r.HandleFunc("/vm_config", db.WithDB(api.CreateVMConfig, client)).Methods(http.MethodPost)
 	r.HandleFunc("/vm_config", db.WithDB(api.GetVMConfigs, client)).Methods(http.MethodGet)
