@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://shashankmadan:railway999@cluster0.gjkve.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+	clientOptions := options.Client().ApplyURI("mongodb+srv://shashankmadan:@cluster0.gjkve.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, clientOptions)

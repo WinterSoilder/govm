@@ -2,7 +2,7 @@ import "./Main.css";
 import hello from "../../assets/hello.svg";
 import Chart from "../charts/Chart";
 
-const Main = () => {
+function Main () {
   return (
     <main>
       <div className="main__container">
@@ -11,8 +11,8 @@ const Main = () => {
         <div className="main__title">
           <img src={hello} alt="hello" />
           <div className="main__greeting">
-            <h1>Hello MobbyPark</h1>
-            <p>Welcome to your admin dashboard</p>
+            <h1>Hello Shashank </h1>
+            <p>Welcome to your GOVM dashboard</p>
           </div>
         </div>
 
@@ -26,7 +26,7 @@ const Main = () => {
               aria-hidden="true"
             ></i>
             <div className="card_inner">
-              <p className="text-primary-p">Number of Vehicles</p>
+              <p className="text-primary-p">Number of VMs</p>
               <span className="font-bold text-title">578</span>
             </div>
           </div>
@@ -34,32 +34,11 @@ const Main = () => {
           <div className="card">
             <i className="fa fa-calendar fa-2x text-red" aria-hidden="true"></i>
             <div className="card_inner">
-              <p className="text-primary-p">Times of Parking</p>
+              <p className="text-primary-p">Most Used</p>
               <span className="font-bold text-title">2467</span>
             </div>
           </div>
 
-          <div className="card">
-            <i
-              className="fa fa-video-camera fa-2x text-yellow"
-              aria-hidden="true"
-            ></i>
-            <div className="card_inner">
-              <p className="text-primary-p">Number of Vehicles</p>
-              <span className="font-bold text-title">340</span>
-            </div>
-          </div>
-
-          <div className="card">
-            <i
-              className="fa fa-thumbs-up fa-2x text-green"
-              aria-hidden="true"
-            ></i>
-            <div className="card_inner">
-              <p className="text-primary-p">Number of Users</p>
-              <span className="font-bold text-title">645</span>
-            </div>
-          </div>
         </div>
         {/* <!-- MAIN CARDS ENDS HERE --> */}
 
