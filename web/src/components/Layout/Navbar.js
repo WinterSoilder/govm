@@ -1,9 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import "./Navbar.css";
+import "./Layout.css";
 import avatar from "../../assets/avatar.svg";
+import { Outlet } from "react-router-dom";
 
-const Navbar = ({ sidebarOpen, openSidebar }) => {
+const Navbar = ({ sidebarOpen, openSidebar, closeSidebar }) => {
   return (
+    <div>
     <nav className="navbar">
       <div className="nav_icon" onClick={() => openSidebar()}>
         <i className="fa fa-bars" aria-hidden="true"></i>
@@ -20,6 +22,8 @@ const Navbar = ({ sidebarOpen, openSidebar }) => {
         </a>
       </div>
     </nav>
+    <Outlet />
+    </div>
   );
 };
 

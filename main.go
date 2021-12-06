@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://shashankmadan:@cluster0.gjkve.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+	clientOptions := options.Client().ApplyURI("mongodb+srv://shashankmadan:railway999@cluster0.gjkve.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, clientOptions)
@@ -26,7 +26,9 @@ func main() {
 
 	r.PathPrefix("").Handler(http.FileServer(http.Dir("./web/build/")))
 
-	r.HandleFunc("/vm_config", db.WithDB(api.CreateVMConfig, client)).Methods(http.MethodPost)
+	r.HandleFunc("/userlogin", db.WithDB(api.SignInUser, client)).Methods(http.MethodPost, http.MethodOptions)
+
+	r.HandleFunc("/vm_config", db.WithDB(api.CreateVMConfig, client)).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/vm_config", db.WithDB(api.GetVMConfigs, client)).Methods(http.MethodGet)
 	r.HandleFunc("/vm_config/{id}", db.WithDB(api.GetVMConfig, client)).Methods(http.MethodGet)
 

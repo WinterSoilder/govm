@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import "./Sidebar.css";
+import "./Layout.css";
 import logo from "../../assets/logo.png";
+import { Link } from "react-router-dom";
 
 const Sidebar = ({ sidebarOpen, closeSidebar }) => {
   return (
@@ -25,12 +26,22 @@ const Sidebar = ({ sidebarOpen, closeSidebar }) => {
         </div>
         <h2>MNG</h2>
         <div className="sidebar__link">
-          <i className="fa fa-user-secret" aria-hidden="true"></i>
-          <a href="#">Admin Management</a>
+          <Link
+            to={'/vms'}
+          >
+            <i className="fa fa-user-secret" aria-hidden="true"></i>
+            <div>
+              My Virtual Machines
+            </div>
+          </Link>
         </div>
         <div className="sidebar__link">
-          <i className="fa fa-building-o"></i>
-          <a href="#">Company Management</a>
+          <Link
+            to={'/login'}
+          >
+            <i className="fa fa-building-o"></i>
+            <a href="#">Company Management</a>
+          </Link>
         </div>
         <div className="sidebar__link">
           <i className="fa fa-wrench"></i>

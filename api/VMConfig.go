@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -16,15 +16,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type VM_Config struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty"`
-	VM_name  string             `bson:"VM_name,omitempty"`
-	cpus     int                `bson:"cpus,omitempty"`
-	Disk     int                `bson:"Disk,omitempty"`
-	Memory   int                `bson:"Memory,omitempty"`
-	Template string             `bson:"Template,omitempty"`
-}
-
 type User_Config struct {
 	name string `name:"VM_name,omitempty"`
 }
@@ -33,18 +24,30 @@ func CreateVMConfig(res http.ResponseWriter, req *http.Request, mongoSession *mo
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	var vm VM_Config
+	var errorResponse = ErrorResponse{
+		Code: http.StatusInternalServerError, Message: "It's not you it's me.",
+	}
+
+	bearerToken := req.Header.Get("Authorization")
+	var authorizationToken = strings.Split(bearerToken, " ")[1]
+
+	email, _ := VerifyToken(authorizationToken)
+	if email == "" {
+		ReturnErrorResponse(res, req, errorResponse)
+	}
+
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		panic(err)
 	}
-	var vm VM_Config
+
+	vm.user_id = GetUserId(email, mongoSession)
 	err = json.Unmarshal(body, &vm)
 	if err != nil {
 		panic(err)
 	}
-	log.Println(vm)
 
-	// return vm.Template
 	coll := mongoSession.Database("govm").Collection("vm_config")
 	data, insertErr := coll.InsertOne(ctx, vm)
 	if insertErr != nil {
@@ -52,22 +55,32 @@ func CreateVMConfig(res http.ResponseWriter, req *http.Request, mongoSession *mo
 	} else if data != nil {
 		fmt.Print(data)
 	}
-
-	// time.Sleep(2)
-	// go process.LaunchVM()
 }
 
 func GetVMConfigs(res http.ResponseWriter, req *http.Request, mongoSession *mongo.Client) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
+	var results []bson.M
 	opts := options.Find()
-	filter := bson.D{{"user", req.URL.Query().Get("user")}}
+	var errorResponse = ErrorResponse{
+		Code: http.StatusInternalServerError, Message: "It's not you it's me.",
+	}
+
+	bearerToken := req.Header.Get("Authorization")
+	var authorizationToken = strings.Split(bearerToken, " ")[1]
+
+	email, _ := VerifyToken(authorizationToken)
+	if email == "" {
+		ReturnErrorResponse(res, req, errorResponse)
+	}
+
+	filter := bson.D{{"user_id", GetUserId(email, mongoSession)}}
 	coll := mongoSession.Database("govm").Collection("vm_config")
 	cursor, err := coll.Find(ctx, filter, opts)
 	if err != nil {
 		panic(err)
 	}
-	var results []bson.M
 	if err = cursor.All(ctx, &results); err != nil {
 		panic(err)
 	}
@@ -95,7 +108,7 @@ func GetVMConfig(res http.ResponseWriter, req *http.Request, mongoSession *mongo
 	filter := bson.D{{"_id", objectId}}
 	coll := mongoSession.Database("govm").Collection("vm_config")
 
-	var result []bson.D
+	var result []bson.M
 	coll.FindOne(ctx, filter, opts).Decode(&result)
 
 	jData, err := json.Marshal(result)
