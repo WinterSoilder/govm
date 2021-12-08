@@ -27,7 +27,7 @@ function Main () {
             ></i>
             <div className="card_inner">
               <p className="text-primary-p">Number of VMs</p>
-              <span className="font-bold text-title">578</span>
+              <span className="font-bold text-title">4</span>
             </div>
           </div>
 
@@ -35,7 +35,7 @@ function Main () {
             <i className="fa fa-calendar fa-2x text-red" aria-hidden="true"></i>
             <div className="card_inner">
               <p className="text-primary-p">Most Used</p>
-              <span className="font-bold text-title">2467</span>
+              <span className="font-bold text-title">UbuntuServer</span>
             </div>
           </div>
 
@@ -66,23 +66,23 @@ function Main () {
 
             <div className="charts__right__cards">
               <div className="card1">
-                <h1>Income</h1>
-                <p>$75,300</p>
+                <h1>Vunerabities</h1>
+                <p>Low</p>
               </div>
 
               <div className="card2">
-                <h1>Sales</h1>
-                <p>$124,200</p>
+                <h1>Location Status</h1>
+                <p>Healthy</p>
               </div>
 
               <div className="card3">
-                <h1>Users</h1>
+                <h1>Daily Users</h1>
                 <p>3900</p>
               </div>
 
               <div className="card4">
-                <h1>Orders</h1>
-                <p>1881</p>
+                <h1>Unique Users</h1>
+                <p>300</p>
               </div>
             </div>
           </div>

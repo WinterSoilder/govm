@@ -19,12 +19,9 @@ func SignInUser(response http.ResponseWriter, request *http.Request, mongoSessio
 		Code: http.StatusInternalServerError, Message: "It's not you it's me.",
 	}
 
-	fmt.Print("im in")
-
 	decoder := json.NewDecoder(request.Body)
 	decoderErr := decoder.Decode(&loginRequest)
 	defer request.Body.Close()
-
 	if decoderErr != nil {
 		ReturnErrorResponse(response, request, errorResponse)
 	} else {
@@ -40,14 +37,15 @@ func SignInUser(response http.ResponseWriter, request *http.Request, mongoSessio
 			collection := mongoSession.Database("govm").Collection("users")
 
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			var err = collection.FindOne(ctx, bson.M{
-				"email":    loginRequest.Email,
-				"password": loginRequest.Password,
+			var err = collection.FindOne(ctx, bson.D{
+				{"Email", loginRequest.Email},
+				{"Password", loginRequest.Password},
 			}).Decode(&result)
 
 			defer cancel()
 
 			if err != nil {
+				fmt.Print("mongo err")
 				ReturnErrorResponse(response, request, errorResponse)
 			} else {
 				tokenString, _ := CreateJWT(loginRequest.Email)
@@ -58,7 +56,7 @@ func SignInUser(response http.ResponseWriter, request *http.Request, mongoSessio
 
 				var successResponse = SuccessResponse{
 					Code:    http.StatusOK,
-					Message: "You are registered, login again",
+					Message: "You are Logged In",
 					Response: SuccessfulLoginResponse{
 						AuthToken: tokenString,
 						Email:     loginRequest.Email,

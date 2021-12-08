@@ -15,20 +15,20 @@ export default function AddressForm(props) {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        VM Configuration Details
+        VM Configuration Details  
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <InputField name={VM_Name.name} label={VM_Name.label} fullWidth />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <InputField name={CPU.name} label={CPU.label} fullWidth />
+          <InputField  name={CPU.name} label={CPU.label} fullWidth />
         </Grid>
-        <Grid item xs={12}>
-          <InputField name={Disk.name} label={Disk.label} fullWidth />
+        <Grid item xs={12} sm={6}>
+          <InputField  name={Disk.name} label={Disk.label} fullWidth />
         </Grid>
-        <Grid item xs={12}>
-          <InputField name={Memory.name} label={Memory.label} fullWidth />
+        <Grid item xs={12} sm={6}>
+          <InputField  name={Memory.name} label={Memory.label} fullWidth />
         </Grid>
         <Grid item xs={12} sm={6}>
           <SelectField

@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"example/user/govm/process"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -22,12 +22,12 @@ type User_Config struct {
 
 func CreateVMConfig(res http.ResponseWriter, req *http.Request, mongoSession *mongo.Client) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	var vm VM_Config
 	var errorResponse = ErrorResponse{
-		Code: http.StatusInternalServerError, Message: "It's not you it's me.",
+		Code: http.StatusInternalServerError, Message: "Server Error",
 	}
+	var vm VM_Config
+
+	defer cancel()
 
 	bearerToken := req.Header.Get("Authorization")
 	var authorizationToken = strings.Split(bearerToken, " ")[1]
@@ -39,56 +39,63 @@ func CreateVMConfig(res http.ResponseWriter, req *http.Request, mongoSession *mo
 
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		panic(err)
+		ReturnErrorResponse(res, req, errorResponse)
 	}
 
-	vm.user_id = GetUserId(email, mongoSession)
 	err = json.Unmarshal(body, &vm)
 	if err != nil {
-		panic(err)
+		ReturnErrorResponse(res, req, errorResponse)
 	}
 
 	coll := mongoSession.Database("govm").Collection("vm_config")
+	vm.User_Id = GetUserId(email, mongoSession)
 	data, insertErr := coll.InsertOne(ctx, vm)
 	if insertErr != nil {
-		panic(insertErr)
+		errorResponse.Code = http.StatusNoContent
+		errorResponse.Message = "Data Not Inserted"
+		ReturnErrorResponse(res, req, errorResponse)
 	} else if data != nil {
-		fmt.Print(data)
+		var result map[string]interface{}
+		coll.FindOne(ctx, bson.D{{"_id", data.InsertedID}}, options.FindOne()).Decode(&result)
+		process.LaunchVM(result)
 	}
 }
 
 func GetVMConfigs(res http.ResponseWriter, req *http.Request, mongoSession *mongo.Client) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var errorResponse = ErrorResponse{
+		Code: http.StatusInternalServerError, Message: "Server Error",
+	}
+	var results []bson.M
+
 	defer cancel()
 
-	var results []bson.M
 	opts := options.Find()
-	var errorResponse = ErrorResponse{
-		Code: http.StatusInternalServerError, Message: "It's not you it's me.",
-	}
 
 	bearerToken := req.Header.Get("Authorization")
 	var authorizationToken = strings.Split(bearerToken, " ")[1]
-
 	email, _ := VerifyToken(authorizationToken)
 	if email == "" {
 		ReturnErrorResponse(res, req, errorResponse)
 	}
 
-	filter := bson.D{{"user_id", GetUserId(email, mongoSession)}}
+	filter := bson.D{{"User_Id", GetUserId(email, mongoSession)}}
 	coll := mongoSession.Database("govm").Collection("vm_config")
 	cursor, err := coll.Find(ctx, filter, opts)
 	if err != nil {
-		panic(err)
+		errorResponse.Code = http.StatusNotFound
+		errorResponse.Message = "Data Invalid Or Not Found"
+		ReturnErrorResponse(res, req, errorResponse)
 	}
 	if err = cursor.All(ctx, &results); err != nil {
-		panic(err)
+		errorResponse.Code = http.StatusNotFound
+		errorResponse.Message = "Data Invalid Or Not Found"
+		ReturnErrorResponse(res, req, errorResponse)
 	}
 
-	// var vm VM_Config
 	jData, err := json.Marshal(results)
 	if err != nil {
-		panic(err)
+		ReturnErrorResponse(res, req, errorResponse)
 	}
 
 	res.Header().Set("Content-Type", "application/json")
@@ -97,23 +104,26 @@ func GetVMConfigs(res http.ResponseWriter, req *http.Request, mongoSession *mong
 
 func GetVMConfig(res http.ResponseWriter, req *http.Request, mongoSession *mongo.Client) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var errorResponse = ErrorResponse{
+		Code: http.StatusInternalServerError, Message: "Server Error",
+	}
+	var result []bson.M
+
 	defer cancel()
-	opts := options.FindOne()
-	fmt.Print(mux.Vars(req)["id"])
+
 	objectId, err := primitive.ObjectIDFromHex(mux.Vars(req)["id"])
 	if err != nil {
-		panic(err)
+		ReturnErrorResponse(res, req, errorResponse)
 	}
 
 	filter := bson.D{{"_id", objectId}}
 	coll := mongoSession.Database("govm").Collection("vm_config")
 
-	var result []bson.M
-	coll.FindOne(ctx, filter, opts).Decode(&result)
+	coll.FindOne(ctx, filter, options.FindOne()).Decode(&result)
 
 	jData, err := json.Marshal(result)
 	if err != nil {
-		panic(err)
+		ReturnErrorResponse(res, req, errorResponse)
 	}
 
 	res.Header().Set("Content-Type", "application/json")

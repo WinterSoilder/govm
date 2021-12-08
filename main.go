@@ -6,15 +6,20 @@ import (
 	"example/user/govm/db"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://shashankmadan:railway999@cluster0.gjkve.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+	err := godotenv.Load("project.env")
+	DB := os.Getenv("DB")
+
+	clientOptions := options.Client().ApplyURI(DB)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, clientOptions)
@@ -24,15 +29,13 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.PathPrefix("").Handler(http.FileServer(http.Dir("./web/build/")))
+	r.HandleFunc("/userlogin", db.WithDB(api.SignInUser, client)).Methods(http.MethodPost)
 
-	r.HandleFunc("/userlogin", db.WithDB(api.SignInUser, client)).Methods(http.MethodPost, http.MethodOptions)
-
-	r.HandleFunc("/vm_config", db.WithDB(api.CreateVMConfig, client)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/vm_config", db.WithDB(api.CreateVMConfig, client)).Methods(http.MethodPost)
 	r.HandleFunc("/vm_config", db.WithDB(api.GetVMConfigs, client)).Methods(http.MethodGet)
 	r.HandleFunc("/vm_config/{id}", db.WithDB(api.GetVMConfig, client)).Methods(http.MethodGet)
 
-	// http.HandleFunc("/vm_config")
+	r.PathPrefix("/admin").Handler(http.FileServer(http.Dir("./web/build/")))
 
-	log.Fatal(http.ListenAndServe(":8030", r))
+	log.Fatal(http.ListenAndServe(":8030", &api.CORSRouterDecorator{r}))
 }

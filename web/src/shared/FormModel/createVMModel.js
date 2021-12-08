@@ -7,7 +7,7 @@ export default {
         requiredErrorMsg: 'Is required'
       },
       CPU: {
-        name: 'CPU',
+        name: 'CPUs',
         label: 'CPU*',
         requiredErrorMsg: 'Is required'
       },
@@ -34,12 +34,12 @@ export default {
         requiredErrorMsg: 'Is required'
       },
       SSHName: {
-        name: 'SSHName',
+        name: 'SSH_username',
         label: 'SSH Name*',
         requiredErrorMsg: 'Is required',
       },
       SSHPassword: {
-        name: 'SSHPassword',
+        name: 'SSH_password',
         label: 'SSH Password*',
         requiredErrorMsg: 'Is required',
       },

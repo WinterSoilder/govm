@@ -1,4 +1,7 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
+
+import { Typography, Grid, Button } from '@material-ui/core';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -20,36 +23,78 @@ const rows = [
 ];
 
 export default function ALLVms() {
-  console.log(rows)
+  const [allVms, setVMs] = useState([])
+  useEffect(() => {
+    fetch('http://localhost:8030/vm_config', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+        })
+        .then(async (response) => {
+          const res = await response.json()
+          setVMs(res)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+  }, [])
+
+  console.log(allVms)
+
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+    <Grid item container>
+      <Grid item xs={2} />
+      <Grid item xs={7}>
+        <Grid container style={{ padding: '20px' }}>
+          <Grid item xs={9}>
+            <Typography gutterBottom>My Virtual Machines</Typography>
+          </Grid>
+          <Grid item xs={3} >
+            <Link
+              to={'/vms/add'}
             >
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                style={{ float: 'right' }}
+              >
+                Create VM
+              </Button>
+            </Link>
+          </Grid>
+        </Grid>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">VM name</TableCell>
+                <TableCell align="left">CPUs</TableCell>
+                <TableCell align="left">Disk&nbsp;(mb)</TableCell>
+                <TableCell align="left">Memory&nbsp;(mb)</TableCell>
+                <TableCell align="left">Template</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {allVms.map((row) => (
+                <TableRow
+                  key={row.VM_name}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell >{row.VM_name}</TableCell>
+                  <TableCell >{row.CPUs}</TableCell>
+                  <TableCell >{row.Disk}</TableCell>
+                  <TableCell >{row.Memory}</TableCell>
+                  <TableCell >{row.Template}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid>
+      <Grid item xs={3} />
+    </Grid>
   );
 }

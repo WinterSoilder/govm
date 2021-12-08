@@ -4,7 +4,7 @@ import {
   Step,
   StepLabel,
   Button,
-  Typography,
+  Grid,
   CircularProgress
 } from '@material-ui/core';
 import { Formik, Form } from 'formik';
@@ -39,21 +39,23 @@ export default function FormIndex() {
   const [activeStep, setActiveStep] = useState(0);
   const isLastStep = activeStep === steps.length - 1;
 
-  function _sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  async function _submitForm(values, actions) {
-    await _sleep(1000);
-    alert(JSON.stringify(values, null, 2));
-    actions.setSubmitting(false);
-
-    setActiveStep(activeStep + 1);
-  }
-
   function _handleSubmit(values, actions) {
     if (isLastStep) {
-      _submitForm(values, actions);
+      fetch('http://localhost:8030/vm_config', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(values)
+        })
+        .then(async (response) => {
+          actions.setSubmitting(false);
+        })
+        .catch((error) => {
+            console.log(error)
+        })
     } else {
       setActiveStep(activeStep + 1);
       actions.setTouched({});
@@ -66,10 +68,10 @@ export default function FormIndex() {
   }
 
   return (
+    <Grid item container>
+      <Grid item xs={3}/>
+      <Grid item xs={6}>
     <React.Fragment>
-      <Typography component="h1" variant="h4" align="center">
-        Checkout
-      </Typography>
       <Stepper activeStep={activeStep} className={classes.stepper}>
         {steps.map(label => (
           <Step key={label}>
@@ -119,5 +121,8 @@ export default function FormIndex() {
         )}
       </React.Fragment>
     </React.Fragment>
+    <Grid item xs={3}/>
+    </Grid>
+    </Grid>
   );
 }

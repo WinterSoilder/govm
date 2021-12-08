@@ -53,11 +53,13 @@ type UserDetails struct {
 }
 
 type VM_Config struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty"`
-	VM_name  string             `bson:"VM_name,omitempty"`
-	cpus     int                `bson:"cpus,omitempty"`
-	Disk     int                `bson:"Disk,omitempty"`
-	Memory   int                `bson:"Memory,omitempty"`
-	Template string             `bson:"Template,omitempty"`
-	user_id  string             `bson:"_id,omitempty"`
+	ID           primitive.ObjectID `bson:"_id,omitempty"`
+	VM_name      string             `bson:"VM_name,omitempty"`
+	CPUs         string             `bson:"CPUs,omitempty"`
+	Disk         string             `bson:"Disk,omitempty"`
+	Memory       string             `bson:"Memory,omitempty"`
+	Template     string             `bson:"Template,omitempty"`
+	User_Id      string             `bson:"User_Id,omitempty"`
+	SSH_username string             `bson:"SSH_username,omitempty"`
+	SSH_password string             `bson:"SSH_password,omitempty"`
 }

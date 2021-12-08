@@ -18,7 +18,7 @@ func ReturnErrorResponse(response http.ResponseWriter, request *http.Request, er
 
 func GetUserId(email string, mongoSession *mongo.Client) string {
 	var user UserDetails
-	mongoSession.Database("govm").Collection("vm_config").FindOne(context.TODO(), bson.D{{"email", email}}).Decode(&user)
+	mongoSession.Database("govm").Collection("users").FindOne(context.TODO(), bson.D{{"Email", email}}).Decode(&user)
 	return user.ID.String()
 }
 
@@ -33,7 +33,7 @@ func (c *CORSRouterDecorator) ServeHTTP(rw http.ResponseWriter, req *http.Reques
 	if origin := req.Header.Get("Origin"); origin != "" {
 		rw.Header().Set("Access-Control-Allow-Origin", origin)
 		rw.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		rw.Header().Set("Access-Control-Allow-Headers", "Accept, Accept-Language, Content-Type")
+		rw.Header().Set("Access-Control-Allow-Headers", "Accept, Accept-Language, Content-Type, Authorization")
 	}
 	// Stop here if its Preflighted OPTIONS request
 	if req.Method == "OPTIONS" {

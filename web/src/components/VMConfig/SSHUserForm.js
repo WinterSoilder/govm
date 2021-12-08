@@ -22,6 +22,7 @@ export default function PaymentForm(props) {
         </Grid>
         <Grid item xs={12} md={6}>
           <InputField
+            type="password"
             name={SSHPassword.name}
             label={SSHPassword.label}
             fullWidth
