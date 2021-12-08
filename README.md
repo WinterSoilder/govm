@@ -1,2 +1,21 @@
-# govm
+# GOVM
 VM Provisioning with GOLANG
+
+## Description
+So i always wondered how ec2 works and best way to learn more about by tryng to clone ec2 albiet a basic version. So i made this project using Golang, Qemu Hardware Emulator and Hashicorp's Packer
+
+***Disclaimer***
+
+This project is my journey for learning GO. No Production Usage Intended.
+
+## Steps to Run
+Make user KVM+Quem is setup
+```
+git clone https://github.com/jakobadam/packer-qemu-templates.git
+git clone https://github.com/WinterSoilder/govm
+cd govm
+setup process.env
+go run main.go
+```
+
+Will release a video demo soon
