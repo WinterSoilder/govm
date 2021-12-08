@@ -22,4 +22,4 @@ setup process.env
 go run main.go
 ```
 
-https://youtu.be/88RrTOPrGP8
+[![Watch the Demo](https://img.youtube.com/vi/https://youtu.be/88RrTOPrGP8/0.jpg)](https://www.youtube.com/watch?v=https://youtu.be/88RrTOPrGP8)
