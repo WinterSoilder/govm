@@ -22,4 +22,4 @@ setup process.env
 go run main.go
 ```
 
-Will release a video demo soon
+https://youtu.be/88RrTOPrGP8
