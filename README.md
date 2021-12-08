@@ -13,7 +13,7 @@ So i always wondered how ec2 works and best way to learn more about by tryng to 
 This project is my journey for learning GO. No Production Usage Intended.
 
 ## Steps to Run
-Make user KVM+Quem is setup
+Make user KVM+Qemu is setup
 ```
 git clone https://github.com/jakobadam/packer-qemu-templates.git
 git clone https://github.com/WinterSoilder/govm
